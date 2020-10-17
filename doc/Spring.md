@@ -37,3 +37,21 @@
 	- @PreDestory():销毁
 	- @Scope()指定作用域
     - @Profile()指定环境bean生效
+
+#### 5、bean循环引用如何解决
+Spring Bean的循环依赖问题，是指类A通过构造函数注入类B的实例（或者B中声明的Bean），而类B通过构造函数注入类A的实例（或者A中声明的Bean），即将类A和类B的bean配置为相互注入，则Spring IoC容器会在运行时检测到此循环引用，并引发一个BeanCurrentlyInCreationException。
+- 延迟加载 @Lazy，例如
+	```java
+	@Component
+	public class CircularDependencyA {
+	
+		private CircularDependencyB circB;
+	
+		@Autowired
+		public CircularDependencyA(@Lazy CircularDependencyB circB) {
+			this.circB = circB;
+		}
+	}
+	```
+- 在实例变量上使用@Autowired注解，让Spring决定在合适的时机注入，而非在初始化类的时候就注入。
+- 用基于setter方法的依赖注入取代基于构造函数的依赖注入来解决循环依赖。

@@ -103,7 +103,7 @@ DirectMemory容量可通过MaxDirectMemorySize指定，如果不指定，则默�
 - GC 开销超过限制
 	- 原因：Java 进程98%的时间在进行垃圾回收，恢复了不到2%的堆空间，最后连续5个（编译时常量）垃圾回收一直如此。
 	- 解决：使用 -Xmx 增加堆大小;使用 -XX:-UseGCOverheadLimit 取消 GC 开销限制;修复应用程序中的内存泄漏
-- 请求的数组大小超过虚拟机限制
+- Requested array size exceeds VM limit 应用程序试图分配一个大于堆大小的数组
 	- 原因：应用程序试图分配一个超过堆大小的数组
 	- 解决：使用 -Xmx 增加堆大小;修复应用程序中分配巨大数组的 bug
 - Perm gen 空间
@@ -112,9 +112,9 @@ DirectMemory容量可通过MaxDirectMemorySize指定，如果不指定，则默�
 - Metaspace 元空间
 	- 原因：从 Java 8 开始 Perm gen 改成了 Metaspace，在本机内存中分配 class 元数据（称为 metaspace）。如果 metaspace 耗尽，则抛出异常
 	- 解决：通过命令行设置 -XX: MaxMetaSpaceSize 增加 metaspace 大小；取消 -XX: maxmetsspacedize；减小 Java 堆大小,为 MetaSpace 提供更多的可用空间；为服务器分配更多的内存；修复bug
-- 无法新建本机线程
+- unable to create new native thread 无法新建本机线程
 	- 原因：内存不足，无法创建新线程。由于线程在本机内存中创建，报告这个错误表明本机内存空间不足
-	- 解决：为机器分配更多的内存；减少 Java 堆空间；修复应用程序中的线程泄漏；增加操作系统级别的限制
+	- 解决：将 heap 及 perm 的最大值下调，并将线程栈内存 -Xss 调小；修复应用程序中的线程泄漏；增加操作系统级别的限制
 `ulimit -a`；用户进程数增大 (-u) 1800；使用 -Xss 减小线程堆栈大小
 - 杀死进程或子进程
 	- 原因：内核任务在可用内存极低的情况下会杀死进程
