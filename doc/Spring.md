@@ -13,6 +13,9 @@
 - [8. 常用注解](#8-常用注解)
 - [9. bean循环引用如何解决](#9-bean循环引用如何解决)
 - [10. 动态代理是什么？应用场景？如何实现](#10-动态代理是什么应用场景如何实现)
+- [11. Spring MVC](#11-spring-mvc)
+    - [11.1. 工作原理](#111-工作原理)
+    - [11.2. 组件说明](#112-组件说明)
 
 <!-- /TOC -->
 
@@ -120,7 +123,6 @@ Spring Bean 的循环依赖问题，是指类A通过构造函数注入类B的实
 - 在实例变量上使用 @Autowired 注解，让 Spring 决定在合适的时机注入，而非在初始化类的时候就注入。
 - 用基于 setter 方法的依赖注入取代基于构造函数的依赖注入来解决循环依赖。
 
-
 ### 10. 动态代理是什么？应用场景？如何实现
 动态代理：在运行时，创建目标类，可以调用和扩展目标类的方法。  
 
@@ -132,5 +134,42 @@ Spring Bean 的循环依赖问题，是指类A通过构造函数注入类B的实
 
 实现方法：
 - JDK 动态代理
+JDK 动态代理只提供接口的代理，不支持类的代理。核心 InvocationHandler 接口和 Proxy 类，InvocationHandler 通过 invoke() 方法反射来调用目标类中的代码，动态地将横切逻辑和业务编织在一起；接着，Proxy 利用 InvocationHandler 动态创建一个符合某一接口的的实例, 生成目标类的代理对象。
+
 - CGLib 动态代理
-- 使用 Spring Aop 模块完成动态代理功能
+如果代理类没有实现 InvocationHandler 接口，那么 Spring AOP 会选择使用 CGLIB 来动态代理目标类。CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成指定类的一个子类对象，并覆盖其中特定方法并添加增强代码，从而实现 AOP。CGLIB 是通过继承的方式做的动态代理，因此如果某个类被标记为 final，那么它是无法使用CGLIB做动态代理的。
+
+### 11. Spring MVC
+![](images/SpringMVC.jfif)
+
+#### 11.1. 工作原理
+1、 用户发送请求至前端控制器 DispatcherServlet。
+
+2、 DispatcherServlet 收到请求调用 HandlerMapping 处理器映射器。
+
+3、 处理器映射器找到具体的处理器(可以根据xml配置、注解进行查找)，生成处理器对象及处理器拦截器(如果有则生成)一并返回给 DispatcherServlet。
+
+4、 DispatcherServlet 调用 HandlerAdapter 处理器适配器。
+
+5、 HandlerAdapter 经过适配调用具体的处理器(Controller，也叫后端控制器)。
+
+6、 Controller 执行完成返回 ModelAndView。
+
+7、 HandlerAdapter 将 Controller 执行结果 ModelAndView 返回给 DispatcherServlet。
+
+8、 DispatcherServlet 将 ModelAndView 传给 ViewReslover 视图解析器。
+
+9、 ViewReslover 解析后返回具体视图 View。
+
+10、DispatcherServlet 根据 View 进行渲染视图（即将模型数据填充至视图中）。
+
+11、 DispatcherServlet 响应用户。
+
+#### 11.2. 组件说明
+DispatcherServlet：作为前端控制器，整个流程控制的中心，控制其它组件执行，统一调度，降低组件之间的耦合性，提高每个组件的扩展性。
+
+HandlerMapping：通过扩展处理器映射器实现不同的映射方式，例如：配置文件方式，实现接口方式，注解方式等。
+
+HandlAdapter：通过扩展处理器适配器，支持更多类型的处理器。
+
+ViewResolver：通过扩展视图解析器，支持更多类型的视图解析，例如：jsp、freemarker、pdf、excel等。
