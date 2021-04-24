@@ -39,7 +39,12 @@
     - [7.2. 字符流和字节流有什么区别](#72-字符流和字节流有什么区别)
     - [7.3. 什么是 Java 序列化，如何实现 Java 序列化？](#73-什么是-java-序列化如何实现-java-序列化)
     - [7.4. 序列化的实现](#74-序列化的实现)
-    - [7.5. BIO、NIO、AIO的区别](#75-bionioaio的区别)
+    - [7.5. Linux 的文件描述符](#75-linux-的文件描述符)
+    - [7.6. 内核态和用户态与 IO](#76-内核态和用户态与-io)
+    - [7.7. BIO、NIO、AIO 的区别](#77-bionioaio-的区别)
+        - [7.7.1. BIO](#771-bio)
+        - [7.7.2. NIO](#772-nio)
+        - [7.7.3. AIO](#773-aio)
 - [8. Java8 特性](#8-java8-特性)
     - [8.1. Lambda](#81-lambda)
     - [8.2. JDK8中Stream接口的常用方法](#82-jdk8中stream接口的常用方法)
@@ -311,7 +316,44 @@ b.如果对于操作需要通过 IO 在内存中频繁处理字符串的情况�
 ### 7.4. 序列化的实现
 将需要被序列化的类实现 Serialize 接口，没有需要实现的方法，此接口只是为了标注对象可被序列化的，然后使用一个输出流（如：FileOutputStream）来构造一 个ObjectOutputStream（对象流）对象，再使用 ObjectOutputStream 对象的 write(Object obj) 方法就可以将参数 obj 的对象写出。
 
-### 7.5. BIO、NIO、AIO的区别
+### 7.5. Linux 的文件描述符
+Linux中一切类型都被抽象成文件，如：普通文件、目录、字符设备、块设备、套接字等。
+
+文件描述符是内核创建的方便管理已打开文件的索引，指代被打开的文件。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。
+
+所有执行I/O操作的系统调用都通过文件描述符（fd）。在Linux系统中，ssh 方式登录后查看 /proc下信息，可以看到系统为每一个进程默认创建0，1，2 三个 fd，0表示标准输入，1表示标准输出，2表示错误输出。$$ 表示当前进程 ID。
+
+```bash
+[root@VM-0-16-centos ~]# cd /proc/$$/fd
+[root@VM-0-16-centos fd]# ll
+total 0
+lrwx------ 1 root root 64 Apr 24 09:01 0 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr 24 09:01 1 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr 24 09:01 2 -> /dev/pts/0
+lrwx------ 1 root root 64 Apr 24 09:01 255 -> /dev/pts/0
+[root@VM-0-16-centos fd]#
+```
+
+### 7.6. 内核态和用户态与 IO
+为了限制不同的程序之间的访问能力, 防止他们获取别的程序的内存数据, 或者获取外围设备的数据, 并发送到网络, 内存被划分为用户态和内核态。内核 
+
+内核态：CPU 可以访问内存所有数据，包括外围设备，例如硬盘、网卡等，CPU 也可以将自己从一个程序切换到另一个程序。
+
+用户态：只能受限的访问内存，且不允许访问外围设备，必须通过系统提供的 syscall 方式调用系统函数。占用 CPU 的能力被剥夺，CPU 资源可以被其他程序获取。
+
+举例磁盘和 socket 的 IO 操作：  
+IO 对文件拷贝操作：硬盘 -->内核空间 -->用户线程空间 -->内核空间 -->硬盘  
+IO 对 socket 操作: scoket -->内核空间 -->用户线程空间 -->内核空间 -->socket
+
+![kernal-user-sapce](images/kernal-user-sapce.png)
+参考 https://zhuanlan.zhihu.com/p/148673095
+
+- Java 中通过对系统的调用来实现网络 IO；
+- ServerSocket server = new ServerSocket(8080); 一行 Java 代码的背后，经过了多个系统函数调用；
+- 实现网络 IO，不是 Java 的能力，是操作系统内核提供的能力。
+
+### 7.7. BIO、NIO、AIO 的区别
+
 - BIO：同步阻塞 IO 模式，数据的读取写入必须阻塞在一个线程内等待其完成
 	- 先将文件内容从磁盘中拷贝到操作系统 buffer
 	- 再从操作系统 buffer 拷贝到  程序应用（应用层）buffer
@@ -320,6 +362,20 @@ b.如果对于操作需要通过 IO 在内存中频繁处理字符串的情况�
 - NIO：同步非阻塞的 IO 模型
 - AIO：异步非阻塞的 IO 模型
 
+#### 7.7.1. BIO
+传统的 BIO 处理多个客户端的请求或在客户端对多个服务端进行通讯，就必须使用多线程来处理。每一个请求都需要分配一个线程来处理，当有大量请求时线程的上下文切换和内存占用对系统来说都是很大的负担。BIO 的阻塞体现在两个地方：
+- ServerSocket # accept(); 在没有新连接时，就会阻塞;
+- Socket # getInputStream() # read(byte[] bs); 在没有数据传输时，就会阻塞
+
+#### 7.7.2. NIO
+NIO 需要系统内核支持，而且在不同系统如 Linux 和 Windows 下的实现方式时不一样的。  
+Java NIO 包为我们提供了一个 selector（多路复用器），然后我们把需要检查的 socket 注册到这个 selector 中，主线程堵塞在 selector 的 select 方法里面。当选择器发现某个 socket 就绪了，它就会唤醒主线程，通过 selector 获取到就绪状态的socket来进行相应的处理。  
+NIO selector 调用 natice 方法是调用操作系统的系统函数，即 kernel#select 函数，每次调用都涉及用户态/内核态的切换，传递的是 socket 集合，即文件描述符 fd，根据 fd 集合检查 socket 状态，就绪态直接返回，没有就堵塞直到有数据过来。
+
+#### 7.7.3. AIO
+当进行读写操作时，只须直接调用API的read或write方法即可。这两种方法均为异步的，对于读操作而言，当有流可读取时，操作系统会将可读的流传入read方法的缓冲区，并通知应用程序；对于写操作而言，当操作系统将write方法传递的流写入完毕时，操作系统主动通知应用程序。 即可以理解为，read/write方法都是异步的，完成后会主动调用回调函数。
+
+参考 https://blog.csdn.net/joyblur/article/details/108402364
 
 ## 8. Java8 特性
 ### 8.1. Lambda
