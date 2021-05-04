@@ -23,9 +23,26 @@ package com.swordoffer.offer68.one;
  */
 public class AncestorTree {
 
+    /**
+     * 二叉搜索树 左节点<根节点<右节点
+     * 如果 p、q 都小于根节点，则 p、q 都在根节点的左子树中，都大于就都在右子树中，然后进入左或右子树继续判断
+     * 不然就是两者的最近公共祖先了
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-
-        return null;
+        while (root != null) {
+            if (p.val<root.val && q.val<root.val) {
+                root = root.left;
+            } else if (p.val>root.val && q.val>root.val) {
+                root = root.right;
+            } else {
+                break;
+            }
+        }
+        return root;
     }
 
 }
