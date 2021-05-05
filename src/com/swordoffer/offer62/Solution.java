@@ -19,12 +19,22 @@ package com.swordoffer.offer62;
  */
 public class Solution {
 
+    /**
+     * 约瑟夫环问题，可使用动态规划解决
+     * @param n
+     * @param m
+     * @return
+     */
     public int lastRemaining(int n, int m) {
         int x=0;
         for (int i=2; i<=n; i++) {
             x = (x+m) % i;
         }
         return x;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Solution().lastRemaining(5, 3));
     }
 
 }
