@@ -1,5 +1,12 @@
 package com.leetcode.multi_threaded;
 
+import com.sun.org.apache.regexp.internal.RE;
+
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * 我们提供一个类：
  *
@@ -33,46 +40,37 @@ package com.leetcode.multi_threaded;
 public class FooBar {
 
     private int n;
+    //使用信号量方式
+    private Semaphore foo = new Semaphore(1);
+    private Semaphore bar = new Semaphore(0);
 
     public FooBar(int n) {
         this.n = n;
     }
 
     public void foo(Runnable printFoo) throws InterruptedException {
-
-        synchronized(this) {
-            System.out.println("===>");
-            for (int i = 0; i < n; i++) {
-                this.wait();
-                // printFoo.run() outputs "foo". Do not change or remove this line.
-                printFoo.run();
-                this.notify();
-            }
+        for (int i = 0; i < n; i++) {
+            foo.acquire();//获取令牌
+            // printFoo.run() outputs "foo". Do not change or remove this line.
+            printFoo.run();
+            bar.release();//释放令牌
         }
-
     }
 
     public void bar(Runnable printBar) throws InterruptedException {
-
-        synchronized(this) {
-            System.out.println("--->");
-            for (int i = 0; i < n; i++) {
-                //Thread.sleep(2000L);
-                //System.out.println("--->");
-                this.notify();
-                this.wait();
-                // printBar.run() outputs "bar". Do not change or remove this line.
-                printBar.run();
-            }
+        for (int i = 0; i < n; i++) {
+            bar.acquire();
+            // printBar.run() outputs "bar". Do not change or remove this line.
+            printBar.run();
+            foo.release();
         }
-
     }
 
     public static void main(String[] args) {
-        FooBar fooBar = new FooBar(5);
-
-
-        new Thread(() -> {
+        //FooBar fooBar = new FooBar(5);
+        //FooBar_one fooBar = new FooBar_one(5);
+        FooBar_two fooBar = new FooBar_two(5);
+        Thread bar = new Thread(() -> {
             try {
                 fooBar.bar(() -> {
                     System.out.print("bar");
@@ -80,18 +78,109 @@ public class FooBar {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        bar.setName("bar");
+        bar.start();
 
-        new Thread(() -> {
+        Thread foo = new Thread(() -> {
             try {
                 fooBar.foo(() -> {
                     System.out.print("foo");
-
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+        foo.setName("foo");
+        foo.start();
+    }
+
+}
+
+
+/**
+ * 同步方式
+ */
+class FooBar_one {
+
+    private int n;
+    private volatile boolean flag = true;
+
+    public FooBar_one(int n) {
+        this.n = n;
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            synchronized (this) {
+                if (!flag) this.wait();
+                // printFoo.run() outputs "foo". Do not change or remove this line.
+                printFoo.run();
+                flag = false;
+                this.notify();
+            }
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            synchronized (this) {
+                if (flag) this.wait();
+                // printBar.run() outputs "bar". Do not change or remove this line.
+                printBar.run();
+                flag = true;
+                this.notify();
+            }
+        }
+    }
+
+}
+
+/**
+ * Lock 接口，和同步方式没啥区别
+ */
+class FooBar_two{
+
+    private int n;
+    private Lock lock;
+    private Condition condition;
+    private boolean flag;
+
+    public FooBar_two(int n) {
+        this.n = n;
+        lock = new ReentrantLock();
+        condition = lock.newCondition();
+        flag = true;
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            try {
+                lock.lock();//堵塞到获取锁为止
+                if (!flag) condition.await();
+                // printFoo.run() outputs "foo". Do not change or remove this line.
+                printFoo.run();
+                flag = false;
+                condition.signal();
+            } finally {
+                lock.unlock();//一定要手动 unlock，循环最后不会 await 让出锁了，因为 await 是在前面
+            }
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            try {
+                lock.lock();
+                if (flag) condition.await();
+                // printBar.run() outputs "bar". Do not change or remove this line.
+                printBar.run();
+                flag = true;
+                condition.signal();
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 
 }

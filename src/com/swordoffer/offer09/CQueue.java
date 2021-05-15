@@ -1,7 +1,5 @@
 package com.swordoffer.offer09;
 
-import com.zgshen.typora.C;
-
 import java.util.Stack;
 
 /**

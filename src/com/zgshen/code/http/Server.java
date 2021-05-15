@@ -28,12 +28,12 @@ public class Server {
             while (true) {
                 // 通信socket的获得
                 Socket socket = serverSocket.accept();
-                //threadPoolExecutor.execute(new Handler(socket));
-                OutputStream out = socket.getOutputStream();
+                threadPoolExecutor.execute(new Handler(socket));
+                /*OutputStream out = socket.getOutputStream();
                 String tmp = "HTTP/1.1 200 OK";
                 out.write(tmp.getBytes(), 0, tmp.length());
                 out.write('\n');
-                socket.close();
+                socket.close();*/
             }
         } catch (Exception e) {
             e.printStackTrace();
