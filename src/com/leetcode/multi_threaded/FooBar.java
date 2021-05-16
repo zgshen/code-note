@@ -2,6 +2,9 @@ package com.leetcode.multi_threaded;
 
 import com.sun.org.apache.regexp.internal.RE;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -69,7 +72,8 @@ public class FooBar {
     public static void main(String[] args) {
         //FooBar fooBar = new FooBar(5);
         //FooBar_one fooBar = new FooBar_one(5);
-        FooBar_two fooBar = new FooBar_two(5);
+        //FooBar_two fooBar = new FooBar_two(5);
+        FooBar_three fooBar = new FooBar_three(5);
         Thread bar = new Thread(() -> {
             try {
                 fooBar.bar(() -> {
@@ -179,6 +183,48 @@ class FooBar_two{
                 condition.signal();
             } finally {
                 lock.unlock();
+            }
+        }
+    }
+
+}
+
+
+class FooBar_three{
+
+    private int n;
+    private CountDownLatch countDownLatch;
+    private CyclicBarrier cyclicBarrier;
+
+    public FooBar_three(int n) {
+        this.n = n;
+        this.countDownLatch = new CountDownLatch(1);
+        this.cyclicBarrier = new CyclicBarrier(2);
+    }
+
+    public void foo(Runnable printFoo) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            // printFoo.run() outputs "foo". Do not change or remove this line.
+            printFoo.run();
+            countDownLatch.countDown();
+            try {
+                cyclicBarrier.await();//每次两个一组，循环使用
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void bar(Runnable printBar) throws InterruptedException {
+        for (int i = 0; i < n; i++) {
+            countDownLatch.await();
+            // printBar.run() outputs "bar". Do not change or remove this line.
+            printBar.run();
+            countDownLatch = new CountDownLatch(1);//countDownLatch 只能用一次，须重新初始化
+            try {
+                cyclicBarrier.await();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
             }
         }
     }
