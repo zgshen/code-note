@@ -1,6 +1,7 @@
 package com.leetcode.medium.seq_692;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 给一非空的单词列表，返回前 k 个出现次数最多的单词。
@@ -32,7 +33,6 @@ public class Solution {
         for (String word : words) {
             map.put(word, map.getOrDefault(word, 0)+1);
         }
-        System.out.println(map);
         List<String> keys = new ArrayList<>();
         for (String s : map.keySet()) {
             keys.add(s);
@@ -46,9 +46,41 @@ public class Solution {
         return keys.subList(0, k);
     }
 
+
+    public List<String> topKFrequent1(String[] words, int k) {
+        Map<String, Integer> map = new HashMap<>();
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0)+1);
+        }
+        System.out.println(map);
+        PriorityQueue<Map.Entry<String, Integer>> queue = new PriorityQueue<>(
+                new Comparator<Map.Entry<String, Integer>>() {
+                    @Override
+                    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                        return o1.getValue() == o2.getValue() ? o2.getKey().compareTo(o1.getKey()) : o1.getValue() - o2.getValue();
+                    }
+                }
+        );
+
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            queue.offer(entry);
+            if (queue.size() > k) {
+                queue.poll();//超过 k 就把最少的出队
+            }
+        }
+        List<String> res = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            res.add(queue.poll().getKey());
+        }
+        Collections.reverse(res);//反转
+        return res;
+    }
+
+
     public static void main(String[] args) {
         String strs[] = {"the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is", "is", "is"};
-        List<String> list = new Solution().topKFrequent(strs, 2);
+        //List<String> list = new Solution().topKFrequent(strs, 2);
+        List<String> list = new Solution().topKFrequent1(strs, 2);
         System.out.println(list);
     }
 }
