@@ -35,7 +35,7 @@
     - [4.5. GC 回收机制](#45-gc-回收机制)
         - [4.5.1. 详细说明](#451-详细说明)
         - [4.5.2. 为什么有两个 Survivor 区](#452-为什么有两个-survivor-区)
-        - [4.5.3. 相关参数](#453-相关参数)
+        - [4.5.3. JVM 相关参数命令](#453-jvm-相关参数命令)
     - [4.6. Minor GC 和 Full GC](#46-minor-gc-和-full-gc)
     - [4.7. Full GC 触发条件](#47-full-gc-触发条件)
 - [5. JVM 问题和调优](#5-jvm-问题和调优)
@@ -359,7 +359,20 @@ Java 对象由三个部分组成：对象头、实例数据、对齐填充。
 
 新建的对象放到 Eden 中，一旦 Eden 满了，触发 Minor GC，Eden 中的存活对象就会被移动到Survivor 区。下一次 Eden 满了的时候，再进行Minor GC，Eden 和 Survivor 各有一些存活对象，如果只有一个 Survivor，Eden 第二次的 GC 的存活对象也是放在唯一的一个 Survivor 区域中。但此时把 Eden 区的存活对象硬放到 Survivor 区，很明显这两部分对象所占有的内存是不连续的，也就导致了内存碎片化。
 
-#### 4.5.3. 相关参数
+#### 4.5.3. JVM 相关参数命令
+
+```Java
+标准命令：- 开头，所有 HotSpot 都支持
+非标准命名：-X 开头，特定版本 HotSpot 支持的命令
+不稳定命令：-XX 开头，下个版本可能取消
+```
+
+```Java
+设置值：-XX:+PrintFlagsFianl
+默认值：-XX:+PrintFlagsInitial
+启动命令行参数：-XX:+PrintCommandLineFlags
+```
+
 ```Java
 -Xms20m  设置堆最小内存20MB
 -Xmx20M  设置堆最大内存20MB
