@@ -95,15 +95,15 @@ Spring 的注入模式有四种：
 	- @Service 用于对业务类进行标注
 	- @Controller 用于对控制类进行标注
 - Spring属性注入
-	- @Autowired():自动注入
-	- @Autowired(required=true):找到匹配的Bean
-	- @Qualifier():可指定Bean的名称
-	- @Resource()和Autowired()功能相似
+	- @Autowired() 自动注入
+	- @Autowired(required=true) 找到匹配的Bean
+	- @Qualifier() 可指定Bean的名称。一个接口有多个实现类可指定使用哪种实现
+	- @Resource() 和 Autowired() 功能相似，@Resource() 是 JDk 自带注解
 - 其他输入
-	- @PostConStruct():初始化
-	- @PreDestory():销毁
-	- @Scope()指定作用域
-    - @Profile()指定环境bean生效
+	- @PostConStruct() 初始化
+	- @PreDestory() 销毁
+	- @Scope() 指定作用域
+    - @Profile() 指定环境bean生效
 
 ### 9. bean循环引用如何解决
 Spring Bean 的循环依赖问题，是指类A通过构造函数注入类B的实例（或者B中声明的Bean），而类B通过构造函数注入类A的实例（或者A中声明的 Bean），即将类A和类B的bean配置为相互注入，则 Spring IoC 容器会在运行时检测到此循环引用，并引发一个 BeanCurrentlyInCreationException。
