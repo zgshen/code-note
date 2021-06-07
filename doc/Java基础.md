@@ -261,7 +261,7 @@ public abstract class TestAbstractClass {
 ### 5.4. return 与 finally 的执行顺序对返回值的影响
 对于 try 和 finally 至少一个语句块包含 return 语句的情况：
 - finally 语句块会执行
-- finally 没有 return，finally 对 return 变量的重新赋值修改无效
+- finally 没有 return，finally 对 return 局部变量的重新赋值修改无效
 - try 和 finally 都包含return，return 值会以 finally 语句块 return 值为准
 
 ## 6. 反射
