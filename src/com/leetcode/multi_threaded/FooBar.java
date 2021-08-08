@@ -1,7 +1,5 @@
 package com.leetcode.multi_threaded;
 
-import com.sun.org.apache.regexp.internal.RE;
-
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
