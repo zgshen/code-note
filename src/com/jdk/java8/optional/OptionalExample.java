@@ -1,6 +1,5 @@
 package com.jdk.java8.optional;
 
-import com.sun.istack.internal.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 

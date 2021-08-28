@@ -1,9 +1,5 @@
 package com.leetcode.easy;
 
-import com.sun.corba.se.impl.oa.toa.TOA;
-
-import java.util.logging.Level;
-
 /**
  * @author nathan
  * @date 2020/8/1 18:18

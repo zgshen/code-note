@@ -1,8 +1,5 @@
 package com.swordoffer.offer37;
 
-import com.zgshen.typora.Test;
-import sun.reflect.generics.tree.Tree;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

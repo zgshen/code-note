@@ -24,10 +24,10 @@ public class Handler implements Runnable {
             System.out.println(req);
 
             if ("/".equals(req.path)) {
-                req.path = "D:\\gitFile\\code-note\\src\\com\\zgshen\\code\\http\\index.html";
+                req.path = Handler.class.getResource("index.html").getPath();
             }
             if ("/favicon.ico".equals(req.path)) {
-                req.path = "favicon.ico";
+                req.path = Handler.class.getResource("favicon.ico").getPath();
             }
             File file = new File(req.path);
             InputStream fin = new FileInputStream(file);

@@ -1,7 +1,5 @@
 package com.zgshen.code.tree;
 
-import sun.reflect.generics.tree.Tree;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Stack;
