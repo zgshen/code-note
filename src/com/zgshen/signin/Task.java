@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class Task {
 
     private static String cookie;
     private static String domain = "http://tieba.baidu.com";
+
     static {
         Properties propertise = new Properties();
         String path = Task.class.getResource("task.properties").getPath();
@@ -34,15 +36,9 @@ public class Task {
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
-        BiConsumer<HttpResponse, Throwable> action = (result, exception) -> {
-            Document doc = Jsoup.parse(result.body().toString());
-            Elements titles = doc.getElementsByClass("bc");
-            String title = titles.get(0).text().split(" ")[0];
-            System.out.println(Thread.currentThread().getName().concat(",").concat(title).concat("签到成功"));
-        };
 
         //http://tieba.baidu.com/mo/m?tn=bdFBW&tab=favorite 用户关注的贴吧链接
         HttpRequest request = builder.uri(URI.create(domain.concat("/mo/m?tn=bdFBW&tab=favorite")))
@@ -59,32 +55,42 @@ public class Task {
 
         System.out.println("开始签到任务...");
         List<CompletableFuture> completableFutureList = new ArrayList<>();
+
+        BiConsumer<HttpResponse, Throwable> action = (result, exception) -> {
+            Document doc = Jsoup.parse(result.body().toString());
+            Elements aLabels = doc.select("a[href]");
+            for (Element ele : aLabels) {
+                String url = domain.concat(ele.attr("href"));
+                if (url.contains("sign")) {
+                    try {
+                        client.sendAsync(HttpRequest.newBuilder().uri(URI.create(url))
+                                .header("Cookie", Task.cookie)
+                                .build(), HttpResponse.BodyHandlers.ofString())
+                                .thenAccept(res -> {
+                                    Document d = Jsoup.parse(res.body());
+                                    Elements titles = d.getElementsByClass("bc");
+                                    String title = titles.get(0).text().split(" ")[0];
+                                    System.out.println(
+                                            Thread.currentThread().getName().concat(",").concat(title).concat("签到成功"));
+                                }).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
         links.forEach(item -> {
             HttpRequest req = builder.uri(URI.create(domain.concat(item)))
                     .header("Cookie", cookie)
                     .build();
-            HttpResponse<String> resp = null;
-            try {
-                resp = client.send(req, HttpResponse.BodyHandlers.ofString());
-                Document doc = Jsoup.parse(resp.body());
-                Elements aLabels = doc.select("a[href]");
-                for (Element ele : aLabels) {
-                    String ss = "http://tieba.baidu.com" + ele.attr("href");
-                    if (ss.contains("sign")) {
-                        CompletableFuture<HttpResponse<String>> future =
-                                client.sendAsync(HttpRequest.newBuilder().uri(URI.create(ss)).header("Cookie",
-                                        Task.cookie).build(), HttpResponse.BodyHandlers.ofString())
-                                        .whenComplete(action);
-                        completableFutureList.add(future);
-                    }
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            CompletableFuture<HttpResponse<String>> future = client.sendAsync(req,
+                    HttpResponse.BodyHandlers.ofString()).whenComplete(action);
+            completableFutureList.add(future);
         });
 
         CompletableFuture[] completableFutures = completableFutureList.stream().toArray(CompletableFuture[]::new);
-        CompletableFuture.allOf(completableFutures);
+        CompletableFuture.allOf(completableFutures).get();
         System.out.println("结束签到任务...");
     }
 
