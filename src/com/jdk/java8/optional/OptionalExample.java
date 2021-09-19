@@ -31,7 +31,7 @@ public class OptionalExample {
         String name = person.flatMap(Person::getCar)
                 .flatMap(Car::getInsurance)
                 .map(Insurance::getName)
-                .orElse("ubknow");
+                .orElse("unknown");
         System.out.println(name);
     }
 
@@ -41,7 +41,7 @@ public class OptionalExample {
         Optional<String> s = c.flatMap(Car::getInsurance)
                 .map(Insurance::getName);
         System.out.println(s);
-        String unknow = s.orElse("unknow");
+        String unknow = s.orElse("unknown");
         System.out.println(unknow);
     }
 

@@ -9,12 +9,22 @@ import java.util.function.Supplier;
 
 public class LambdaTest {
 
-    public static void interfaceTest(SingleFunInterface singleFunInterface) {
+    public LambdaTest() {
+    }
+    public LambdaTest(String str) {
+        //use param str to do something
+    }
+
+    public static void interfaceTest(SingleFncInterface singleFunInterface) {
         singleFunInterface.doSomething("123");
     }
 
-    public static void staticMenthod() {
-        System.out.println("static menthod.");
+    public void simpleMenthod(String str) {
+        System.out.println("simple method. str is:");
+    }
+
+    public static void staticMenthod(String str) {
+        System.out.println("static menthod. str is:");
     }
 
     /**
@@ -27,21 +37,38 @@ public class LambdaTest {
             System.out.println("single function interface. param:" + str);
         });
 
-        SingleFunInterface s = (String str) -> System.out.println(str);
+        //SingleFncInterface s = (String str) -> System.out.println(str);
+        SingleFncInterface s = str -> System.out.println(str);
         s.doSomething("123");
 
         //简化形式，方法引用
+        //LambdaTest.interfaceTest(item -> System.out.println(item));
         LambdaTest.interfaceTest(System.out::println);
     }
 
     /**
-     * 静态方法
+     * 方法引用
      */
     @Test
-    public void test() {
+    public void refTest() {
+        //静态引用。意思就是用 String 的 valof() 方法来实现 Function 接口的 apply 方法
         Function<Integer, String> fun = String::valueOf;
         String apply = fun.apply(100);
         System.out.println(apply);
+
+        //静态引用
+        SingleFncInterface sfi1 = LambdaTest::staticMenthod;
+
+        //实例引用
+        LambdaTest lambdaTest = new LambdaTest();
+        SingleFncInterface sfi2 = lambdaTest::simpleMenthod;
+
+        //构造引用，带参数
+        SingleFncInterface sfi3 = LambdaTest::new;
+
+        //构造引用，不带参数
+        Runnable runnable = LambdaTest::new;
+        //runnable.run();//单函数 Runnable 接口 run 方法由 LambdaTest 构造实现
     }
 
     /**
@@ -90,6 +117,11 @@ public class LambdaTest {
 /**
  * 单函数接口
  */
-interface SingleFunInterface {
+@FunctionalInterface
+interface SingleFncInterface {
     void doSomething(String str);
+
+    default void print() {
+        System.out.println("default method.");
+    }
 }
