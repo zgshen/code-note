@@ -1,4 +1,4 @@
-package com.jdk.java8.optional;
+package com.jdk.java8;
 
 import org.junit.Before;
 import org.junit.Test;
