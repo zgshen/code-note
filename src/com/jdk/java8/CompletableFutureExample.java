@@ -63,7 +63,7 @@ public class CompletableFutureExample {
 
     @Test
     public void allof() throws ExecutionException, InterruptedException {
-        List<Integer> integers = List.of(1, 2, 3);
+        List<Integer> integers = List.of(1, 2, 3);// List.of Java9 才支持
         List<CompletableFuture<Integer>> futureList = integers.stream()
                         .map(item -> CompletableFuture.completedFuture(item).thenApplyAsync(num -> num * num))
                         .collect(Collectors.toList());
