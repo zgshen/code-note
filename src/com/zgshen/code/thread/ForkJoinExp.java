@@ -4,7 +4,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
-public class ForkJoin {
+public class ForkJoinExp {
 
     private class SumTask extends RecursiveTask<Integer> {
 
@@ -53,7 +53,7 @@ public class ForkJoin {
 
         ForkJoinPool pool = new ForkJoinPool();
         //提交任务到ForkJoinPool可以直接使用ForkJoinTask的invoke，隐式的使用ForkJoinPool.commonPool()池，也可以显示的创建ForkJoinPool实例通过submit提交
-        ForkJoinTask<Integer> task = pool.submit(new ForkJoin().new SumTask(arr, 0, arr.length));
+        ForkJoinTask<Integer> task = pool.submit(new ForkJoinExp().new SumTask(arr, 0, arr.length));
         //ForkJoinTask<Integer> task = pool.commonPool().submit(new ForkJoin().new SumTask(arr, 0, arr.length));
         System.out.println("计算: " + task.invoke());
         pool.shutdown();
