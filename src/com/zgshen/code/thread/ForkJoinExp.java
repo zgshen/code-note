@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask;
 public class ForkJoinExp {
 
     private class SumTask extends RecursiveTask<Integer> {
-
+        //阈值
         private static final int THRESHOLD = 20;
 
         private int arr[];
@@ -32,14 +32,16 @@ public class ForkJoinExp {
         @Override
         protected Integer compute() {
             if ((end - start) <= THRESHOLD) {
+                //小于等于阈值直接求和
                 return subtotal();
             }else {
+                //大于阈值分割
                 int middle = (start + end) / 2;
                 SumTask left = new SumTask(arr, start, middle);
                 SumTask right = new SumTask(arr, middle, end);
                 left.fork();
                 right.fork();
-
+                //子任务 join 递归
                 return left.join() + right.join();
             }
         }

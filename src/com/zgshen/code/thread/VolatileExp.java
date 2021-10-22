@@ -1,5 +1,8 @@
 package com.zgshen.code.thread;
 
+/**
+ * volatile 状态标记量应用
+ */
 public class VolatileExp {
 
     private static volatile boolean flag = false;
