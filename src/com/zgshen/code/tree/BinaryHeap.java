@@ -15,7 +15,12 @@ public class BinaryHeap {
      */
     public static void upAdjust(int[] array) {
         int childIndex = array.length - 1;//插入节点下标，数组最后一个元素
-        int parentIndex = (childIndex - 1)/2;//父节点下标
+        /**
+         * 计算父节点下标
+         * 若当前是左节点，父节点下标为（节点下标-1）/2
+         * 若当前是右节点，减1为奇数，（节点下标-1）/2 向下取整结果也等于左节点的情况
+         */
+        int parentIndex = (childIndex - 1)/2;
 
         int temp = array[childIndex];//调整的数
         while (childIndex>0 && temp < array[parentIndex]) {
@@ -29,6 +34,9 @@ public class BinaryHeap {
     /**
      * 下沉调整
      * 删除操作，最后一个元素替换一个元素再做下沉操作
+     * @param array 源数组
+     * @param parentIndex 要调整节点的父节点下标
+     * @param length 数组长度
      */
     public static void downAdjust(int[] array, int parentIndex, int length) {
         int temp = array[parentIndex];
