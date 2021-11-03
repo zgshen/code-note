@@ -18,6 +18,7 @@ public class PriorityQueue {
     public void enQueue(int key) {
         if (size > array.length) {
             //扩容
+            resize();
         }
         array[size++] = key;
         //上浮操作

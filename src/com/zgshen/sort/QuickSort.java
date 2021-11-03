@@ -1,5 +1,7 @@
 package com.zgshen.sort;
 
+import java.util.Arrays;
+
 /**
  * @author nathan
  * @date 2020/8/5 9:59
@@ -8,19 +10,17 @@ package com.zgshen.sort;
 public class QuickSort {
 
     public static void main(String[] args) {
-        //int[] arr = {5, 6, 1, 20, 15};
         int[] arr = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
-        /*int[] ints = quickSort(arr, 0, arr.length-1);
-        for (int v: ints) {
-            System.out.print(v + ",");
-        }
-        System.out.println();*/
+        quickSort(arr, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr));
 
-        int[] intss = quickSortTwoWay(arr, 0, arr.length-1);
-        for (int v: intss) {
-            System.out.print(v + ",");
-        }
+        int[] arr1 = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
+        quickSortTwoWay(arr1, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr1));
 
+        int[] arr2 = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
+        quickSortTwoWay1(arr2, 0, arr.length-1);
+        System.out.println(Arrays.toString(arr2));
     }
 
     public static int[] quickSort(int[] arr, int left, int right) {
@@ -57,16 +57,40 @@ public class QuickSort {
         arr[j] = temp;
     }
 
-
-
+    /**
+     * 双边操作
+     */
     public static int[] quickSortTwoWay(int[] arr, int left, int right) {
         //第一种方式
-        /*if (left < right) {
+        if (left < right) {
             int partition = partitionTwoWay(arr, left, right);//基准值
             quickSortTwoWay(arr, left, partition-1);
             quickSortTwoWay(arr, partition+1, right);
-        }*/
-        //int i, j, t, temp;
+        }
+        return arr;
+    }
+    // 分区操作，双边操作
+    public static int partitionTwoWay(int[] arr, int left, int right) {
+        int pivot = arr[left];// 设定基准值（pivot）
+        while (left < right) {
+            while (left<right && arr[right]>pivot) {
+                right--;
+            }
+            arr[left] = arr[right];//基准位置临时存小值
+            while (left<right && arr[left]<=pivot) {
+                left++;
+            }
+            arr[right] = arr[left];//右边存大值
+        }
+        arr[left] = pivot;//基准值移到中间
+        return left;
+    }
+
+
+    /**
+     * 双边操作，另一种方式
+     */
+    public static int[] quickSortTwoWay1(int[] arr, int left, int right) {
         if (left < right) {
           int pivot = arr[left];
           int temp;
@@ -86,8 +110,6 @@ public class QuickSort {
                   arr[hight] = temp;
               }
           }
-          //arr[left] = arr[low];
-          //arr[low] = pivot;
           //左右部分继续遍历
           quickSortTwoWay(arr, left, low-1);
           quickSortTwoWay(arr, low+1, right);
@@ -95,20 +117,4 @@ public class QuickSort {
         return arr;
     }
 
-    // 分区操作，双边操作
-    public static int partitionTwoWay(int[] arr, int left, int right) {
-        int pivot = arr[left];// 设定基准值（pivot）
-        while (left < right) {
-            while (left<right && arr[right]>pivot) {
-                right--;
-            }
-            arr[left] = arr[right];//基准位置临时存小值
-            while (left<right && arr[left]<=pivot) {
-                left++;
-            }
-            arr[right] = arr[left];//右边存大值
-        }
-        arr[left] = pivot;//基准值移到中间
-        return left;
-    }
 }

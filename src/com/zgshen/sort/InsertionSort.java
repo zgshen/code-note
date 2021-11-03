@@ -15,16 +15,10 @@ public class InsertionSort {
         }
         System.out.println();
 
-        int[] intss = insertionSortWhile(arr);
-        for (int v: intss) {
+        int[] arr1 = {5, 6, 1, 20, 15};
+        int[] ints1 = insertionSortWhile(arr1);
+        for (int v: ints1) {
             System.out.print(v + ",");
-        }
-
-        int gap = 4;
-        double floor = Math.floor(gap / 3);
-        for (; gap > 0; gap = Double.valueOf(Math.floor(gap/3)).intValue()) {
-            System.out.println(gap);
-            System.out.println(Double.valueOf(Math.floor(gap/3)).intValue());
         }
     }
 
@@ -50,6 +44,9 @@ public class InsertionSort {
         return arr;
     }
 
+    /**
+     * while 写法
+     */
     public static int[] insertionSortWhile(int[] arr) {
         for (int i=1; i<arr.length; i++) {
             int value = arr[i];
