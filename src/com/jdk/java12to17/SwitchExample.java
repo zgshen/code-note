@@ -44,6 +44,7 @@ public class SwitchExample {
     }
 
     /**
+     * 类型检查
      * 根据 object 不同的类型和条件做不同的处理
      * 这个是 17 的预览特性
      */
@@ -51,6 +52,7 @@ public class SwitchExample {
     public void formatTest() {
         Object o = 1000000000;
         String formatted = switch (o) {
+            //相当于 if (o instanceof Integer && (int)o > 10)
             case Integer i && i > 10 -> String.format("a large Integer %d", i);
             case Integer i -> String.format("a small Integer %d", i);
             case Long l    -> String.format("a Long %d", l);

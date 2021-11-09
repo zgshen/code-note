@@ -80,13 +80,15 @@ Spring 的注入模式有四种：
 	- @Qualifier() 可指定Bean的名称。一个接口有多个实现类可指定使用哪种实现
 	- @Resource() 和 Autowired() 功能相似，@Resource() 是 JDk 自带注解
 - 其他输入
-	- @PostConStruct() 初始化
+	- @PostConstruct() 初始化
 	- @PreDestory() 销毁
 	- @Scope() 指定作用域
     - @Profile() 指定环境bean生效
 
 ### 9. bean循环引用如何解决
 Spring Bean 的循环依赖问题，是指类 A 通过构造函数注入类 B 的实例（或者B中声明的 Bean），而类 B 通过构造函数注入类 A 的实例（或者A中声明的 Bean），即将类 A 和类 B 的 bean 配置为相互注入，则 Spring IoC 容器会在运行时检测到此循环引用，并引发一个 BeanCurrentlyInCreationException。
+
+解决方式有以下几种：
 - 延迟加载 @Lazy，例如
 	```java
 	@Component
@@ -110,7 +112,7 @@ Spring Bean 的循环依赖问题，是指类 A 通过构造函数注入类 B �
 - 统计每个 api 的请求耗时
 - 统一的日志输出
 - 校验被调用的 api 是否已经登录和权限鉴定
-- Spring的 AOP 功能模块就是采用动态代理的机制来实现切面编程
+- Spring 的 AOP 功能模块就是采用动态代理的机制来实现切面编程
 
 实现方法：
 - JDK 动态代理  
