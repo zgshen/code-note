@@ -61,14 +61,7 @@ Spring 的注入模式有四种：
 - 模版方法模式：Spring 中 jdbcTemplate、hibernateTemplate 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式；
 - 装饰者模式
 
-### 7. @Transactional 注解哪些情况下会失效？
-- 作用在非 public 方法上
-- 方法异常被捕获
-- 数据库不支持事务（例如 MySQL 的 MyISAM）
-- 没开启事务注解
-- 同一类中加 @Transactional 方法被无 @Transactional 的方法调用，事务失效
-
-### 8. 常用注解
+### 7. 常用注解
 - bean定义注解
 	- @component 描述 Spring 框架中的 bean
 	- @Repository 用于对 DAO 实现类进行标注
@@ -85,7 +78,7 @@ Spring 的注入模式有四种：
 	- @Scope() 指定作用域
     - @Profile() 指定环境bean生效
 
-### 9. bean循环引用如何解决
+### 8. bean循环引用如何解决
 Spring Bean 的循环依赖问题，是指类 A 通过构造函数注入类 B 的实例（或者B中声明的 Bean），而类 B 通过构造函数注入类 A 的实例（或者A中声明的 Bean），即将类 A 和类 B 的 bean 配置为相互注入，则 Spring IoC 容器会在运行时检测到此循环引用，并引发一个 BeanCurrentlyInCreationException。
 
 解决方式有以下几种：
@@ -105,7 +98,7 @@ Spring Bean 的循环依赖问题，是指类 A 通过构造函数注入类 B �
 - 在实例变量上使用 @Autowired 注解，让 Spring 决定在合适的时机注入，而非在初始化类的时候就注入。
 - 用基于 setter 方法的依赖注入取代基于构造函数的依赖注入来解决循环依赖。
 
-### 10. 动态代理是什么？应用场景？如何实现
+### 9. 动态代理是什么？应用场景？如何实现
 动态代理：在运行时，创建目标类，可以调用和扩展目标类的方法。  
 
 应用场景：
@@ -121,10 +114,10 @@ JDK 动态代理只提供接口的代理，不支持类的代理。核心 Invoca
 - CGLib 动态代理  
 如果代理类没有实现 InvocationHandler 接口，那么 Spring AOP 会选择使用 CGLIB 来动态代理目标类。CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成指定类的一个子类对象，并覆盖其中特定方法并添加增强代码，从而实现 AOP。CGLIB 是通过继承的方式做的动态代理，因此如果某个类被标记为 final，那么它是无法使用CGLIB做动态代理的。
 
-### 11. Spring MVC
+### 10. Spring MVC
 ![](images/SpringMVC.jfif)
 
-#### 11.1. 工作原理
+#### 10.1. 工作原理
 1、 用户发送请求至前端控制器 DispatcherServlet。
 
 2、 DispatcherServlet 收到请求调用 HandlerMapping 处理器映射器。
@@ -147,7 +140,7 @@ JDK 动态代理只提供接口的代理，不支持类的代理。核心 Invoca
 
 11、 DispatcherServlet 响应用户。
 
-#### 11.2. 组件说明
+#### 10.2. 组件说明
 DispatcherServlet：作为前端控制器，整个流程控制的中心，控制其它组件执行，统一调度，降低组件之间的耦合性，提高每个组件的扩展性。
 
 HandlerMapping：通过扩展处理器映射器实现不同的映射方式，例如：配置文件方式，实现接口方式，注解方式等。
@@ -155,3 +148,46 @@ HandlerMapping：通过扩展处理器映射器实现不同的映射方式，例
 HandlAdapter：通过扩展处理器适配器，支持更多类型的处理器。
 
 ViewResolver：通过扩展视图解析器，支持更多类型的视图解析，例如：jsp、freemarker、pdf、excel等。
+
+### 11. Spring 事务管理和事务传播行为
+
+Spring 事务的本质是数据库对事务的支持，例如 MySQL 的 MyISAM 引擎不支持事务，Spring 的事务也就不会生效。
+
+#### 11.1. 事务隔离级别
+参考数据库隔离级别部分。
+
+#### 11.2. 事务传播机制
+
+- PROPAGATION_REQUIRED：Spring的默认传播级别，如果上下文中存在事务则加入当前事务，如果不存在事务则新建事务执行。
+
+- PROPAGATION_SUPPORTS：如果上下文中存在事务则加入当前事务，如果没有事务则以非事务方式执行。
+
+- PROPAGATION_MANDATORY：该传播级别要求上下文中必须存在事务，否则抛出异常。
+
+- PROPAGATION_REQUIRES_NEW：该传播级别每次执行都会创建新事务，并同时将上下文中的事务挂起，执行完当前线程后再恢复上下文中事务。（子事务的执行结果不影响父事务的执行和回滚）
+
+- PROPAGATION_NOT_SUPPORTED：当上下文中有事务则挂起当前事务，执行完当前逻辑后再恢复上下文事务。（降低事务大小，将非核心的执行逻辑包裹执行。）
+
+- PROPAGATION_NEVER：该传播级别要求上下文中不能存在事务，否则抛出异常。
+
+- PROPAGATION_NESTED：嵌套事务，如果上下文中存在事务则嵌套执行，如果不存在则新建事务。（save point概念）
+
+#### 11.3. 事务种类
+Spring 支持编程式事务管理和声明式事务管理两种方式。
+
+编程式事务管理使用 TransactionTemplate。
+
+声明式事务是建立在 AOP 功能之上。
+- 声明式事务最大的优点就是不需要在业务逻辑代码中掺杂事务管理的代码，只需在配置文件中做相关的事务规则声明或通过@Transactional 注解的方式，便可以将事务规则应用到业务逻辑中；
+- 声明式事务管理要优于编程式事务管理，这正是 spring 倡导的非侵入式的开发方式，使业务代码不受污染，只要加上注解就可以获得完全的事务支持。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到代码块级别；
+- 声明式事务本质是通过 AOP 功能，对方法前后进行拦截，将事务处理的功能编织到拦截的方法中，也就是在目标方法开始之前加入一个事务，在执行完目标方法之后根据执行情况提交或者回滚事务。
+
+#### 11.4. @Transactional 注解哪些情况下会失效？
+- 作用在非 public 方法上
+- 方法异常被捕获
+- 数据库不支持事务（例如 MySQL 的 MyISAM）
+- 没开启事务注解
+- 同一类中加 @Transactional 方法被无 @Transactional 的方法调用，事务失效
+
+
+
