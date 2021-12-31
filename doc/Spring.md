@@ -1,10 +1,17 @@
 
-### 1. Spring 模块组成
-- Spring Core 框架核心，提供 IOC 容器，管理 bean 对象
+### Spring 相关概念
+Spring 是一个轻量级的开发框架，旨在提高开发人员的开发效率以及系统的可维护性。广义上 Spring 是一个生态体系，包含了 Spring Framework、Spring Boot、Spring Cloud 等等。
+
+Spring Boot 基本上是 Spring 框架的扩展，它消除了设置 Spring 应用程序所需的样板配置。
+
+Spring Cloud 是基于 Spring Boot 提供的一套微服务框架，用于微服务的整合和管理。
+
+### 1. Spring 主要模块组成
+- Spring Core 框架核心，提供 IoC 容器，管理 bean 对象
 - Spring Context 提供上下文信息
 - Spring Dao 提供 JDBC 抽象层
 - Spring ORM 提供“对象/关系”映射 APIs 的集成层
-- Spring AOP 切面编程功能
+- Spring AOP 提供切面编程功能
 - Spring Web 提供 web 开发的上下文信息
 - Spring Web MVC 提供了 web 应用的 model-view-controller 实现
 
@@ -17,7 +24,7 @@
 
 ### 3. IoC控制反转
 - 把创建和查找依赖对象的控制权交给 IoC 容器
-- DI 依赖注入是IOC容器装配和注入对象的一种方式
+- DI 依赖注入是 IoC 容器装配和注入对象的一种方式
 - 作用
 	- 松耦合
 	- 资源集中管理
