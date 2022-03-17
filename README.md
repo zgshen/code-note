@@ -2,6 +2,9 @@
 ## Note Project
 
 ### 文档
+
+> 不再更新,迁移至 [wiki](https://wiki.zguishen.com/develop/java/interview/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/) 中。
+
 - [Java 知识脑图](https://github.com/zgshen/code-note/blob/master/doc/brainmap/Interview.svg)
 
 - [计算机基础](https://github.com/zgshen/code-note/blob/master/doc/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80.md)
