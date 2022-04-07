@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class SocketServer {
 
-    public void run() {
+    public void start() {
         ServerSocket server = null;
         try {
             server = new ServerSocket(8120);
@@ -31,7 +31,7 @@ public class SocketServer {
 
     public static void main(String[] args) {
         SocketServer server = new SocketServer();
-        server.run();
+        server.start();
     }
 }
 

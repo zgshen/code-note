@@ -9,7 +9,7 @@ package com.zgshen.code.io.bio;
 public class BioExp {
 
     public static void main(String[] args) throws InterruptedException {
-        Thread thread = new Thread(() -> new SocketServer().run());
+        Thread thread = new Thread(() -> new SocketServer().start());
         thread.start();
         while (thread.getState() != Thread.State.RUNNABLE) Thread.yield();
 
