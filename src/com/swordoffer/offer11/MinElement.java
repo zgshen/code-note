@@ -63,11 +63,35 @@ public class MinElement {
         return res;
     }
 
+    /**
+     * 二分法
+     * @param numbers
+     * @return
+     */
+    public int minArray2(int[] numbers) {
+        int i=0, j=numbers.length-1;
+        while (i < j) {
+            int m = (i+j)/2;
+            if (numbers[m] > numbers[j]) i=m+1;
+            else if (numbers[m] < numbers[j]) j=m;
+            //else j--;
+            // 或者直接使用线性查找
+            else {
+                int x=i;
+                for (int k = 0; k < j; k++) {
+                    if (numbers[k] < numbers[i]) x=k;
+                }
+                return numbers[x];
+            }
+        }
+        return numbers[i];
+    }
 
     public static void main(String[] args) {
         //int arr[] = {3,4,5,1,2};
         int arr[] = {10,1,10,10,10};
         System.out.println(new MinElement().minArray(arr));
         System.out.println(new MinElement().minArray1(arr));
+        System.out.println(new MinElement().minArray2(arr));
     }
 }

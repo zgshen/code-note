@@ -25,9 +25,8 @@ public class PtintLinkArr {
             stack.push(head.val);
             head = head.next;
         }
-        int len = stack.size();
-        int arr[] = new int[len];
-        for (int i = 0; i < len; i++) {
+        int arr[] = new int[stack.size()];
+        for (int i = 0; i < arr.length; i++) {
             arr[i] = stack.pop();
         }
         return arr;
@@ -51,20 +50,19 @@ public class PtintLinkArr {
     /**
      * 头插法
      */
-    public int[] reversePrint2(ListNode oldList) {
-        ListNode newList = new ListNode(-1);
+    public int[] reversePrint2(ListNode head) {
+        ListNode newList = null;
         int len = 0;
-        while (oldList != null) {
-            ListNode next = oldList.next;
-
-            oldList.next = newList.next;
-            newList.next = oldList;//oldList 节点塞入 newList 和 newList.next 之间
-
-            oldList = next;
+        while (head != null) {
+            ListNode next = head.next;
+            // 插入头部
+            head.next = newList;
+            newList = head;
+            // 下一个继续遍历
+            head = next;
             len++;
         }
 
-        newList = newList.next;
         int arr[] = new int[len];
         while (newList != null) {
             arr[arr.length - len] = newList.val;
@@ -81,7 +79,7 @@ public class PtintLinkArr {
                         new ListNode(5)
                 )));
 
-        int[] ints = new PtintLinkArr().reversePrint2(listNode);
+        int[] ints = new PtintLinkArr().reversePrint1(listNode);
         System.out.println(Arrays.toString(ints));
     }
 }
