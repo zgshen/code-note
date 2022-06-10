@@ -1,5 +1,7 @@
 package com.swordoffer.offer33;
 
+import java.util.Stack;
+
 /**
  * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同。
  *
@@ -52,4 +54,24 @@ public class Verify {
         return res;
     }
 
+
+    public boolean verifyPostorder1(int[] postorder) {
+        Stack<Integer> s = new Stack<>();
+        // 父节点先设置为无限大
+        int parent = Integer.MAX_VALUE;
+        for (int i = postorder.length - 1; i >= 0; i--) {
+            int cur = postorder[i];
+            // 倒叙遍历，当前节点小于栈顶则重新找父节点
+            while (!s.isEmpty() && cur < s.peek()) parent = s.pop();
+            if (cur > parent) return false;
+            s.push(cur);
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {3, 6, 5, 9, 8, 11, 13, 15, 14, 16, 11};
+        //int[] arr = {10,6,5,9,8,11,13,16};
+        System.out.println(new Verify().verifyPostorder1(arr));
+    }
 }

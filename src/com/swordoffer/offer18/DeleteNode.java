@@ -59,6 +59,16 @@ public class DeleteNode {
         return head;
     }
 
+    public ListNode deleteNode1(ListNode head, int val) {
+        if (head==null) return head;
+        if (head.val==val) return head.next;
+        ListNode cur=head;
+
+        while (cur.next!=null && cur.next.val!=val) cur=cur.next;
+        if (cur.next!=null) cur.next = cur.next.next;
+        return head;
+    }
+
     public static void main(String[] args) {
         ListNode node1 = new ListNode(1);
         ListNode node2 = new ListNode(2);
@@ -69,7 +79,7 @@ public class DeleteNode {
         node2.next = node3;
         node3.next = node4;
 
-        ListNode listNode = new DeleteNode().deleteNode(node1, 4);
+        ListNode listNode = new DeleteNode().deleteNode1(node1, 4);
         System.out.println(listNode);
     }
 

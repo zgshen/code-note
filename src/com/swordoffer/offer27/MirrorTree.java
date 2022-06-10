@@ -32,17 +32,9 @@ public class MirrorTree {
 
     public TreeNode mirrorTree(TreeNode root) {
         if (root == null) return root;
-        TreeNode node = root.left;
-
-        /*root.left = root.right;
-        root.right = node;
-        mirrorTree(root.left);
-        mirrorTree(root.right);*/
-        //等价于
-
+        TreeNode tmp = root.left;
         root.left = mirrorTree(root.right);
-        root.right = mirrorTree(root.left);
-
+        root.right = mirrorTree(tmp);
         return root;
     }
 

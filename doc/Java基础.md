@@ -55,7 +55,7 @@ int y = x;         // 拆箱 调用了 X.intValue()
 
 ### 3.3. 缓存池
 
-基本类型对应的缓冲池如下：
+基本类型对应的缓存池如下：
 - boolean values true and false
 - all byte values
 - short values between -128 and 127
