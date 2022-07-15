@@ -32,5 +32,6 @@ hs_err_pid*
 .settings
 .metadata
 /.gradle/
+/.vscode/
 /build/
 /out/
