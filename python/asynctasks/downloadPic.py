@@ -8,18 +8,18 @@ async def job(session, url):
     # 碰到 await 切换协程，等待数据获取完毕
     img = await session.get(url)
     # 从网络中读取
-    imgcode = await img.read()
+    img_code = await img.read()
     # 写入保存
     # with open('/home/nathan/project/fa-py/' + str(name), 'wb') as f:
     with open(str(name), 'wb') as f:
-        f.write(imgcode)
+        f.write(img_code)
     return str(url)
 
 
-async def main(loop, urls):
+async def main(_loop, _urls):
     async with aiohttp.ClientSession() as session:
         # 任务
-        tasks = [loop.create_task(job(session, urls[_])) for _ in range(2)]
+        tasks = [_loop.create_task(job(session, _urls[_])) for _ in range(2)]
         # 等待完成
         finished, unfinished = await asyncio.wait(tasks)
         all_results = [r.result() for r in finished]
