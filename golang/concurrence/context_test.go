@@ -113,3 +113,28 @@ func deadWatch(ctx context.Context, name string, cur time.Time) {
 		}
 	}
 }
+
+//WithValue
+func TestContextValue(t *testing.T) {
+	ctxChild := context.WithValue(context.Background(), "name", "nathan")
+	ctx, cancel := context.WithCancel(ctxChild)
+	go taskKeyValue(ctx)
+	//延时3秒
+	time.Sleep(time.Second * 3)
+	cancel()
+}
+
+func taskKeyValue(ctx context.Context) {
+	//从context中根据键获取值
+	fmt.Println(ctx.Value("name"))
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("done.")
+			return
+		case <-time.After(time.Second):
+			//延时1秒，三秒上面done
+			fmt.Println("delay...")
+		}
+	}
+}
