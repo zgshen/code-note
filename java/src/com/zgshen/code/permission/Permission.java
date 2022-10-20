@@ -1,5 +1,9 @@
 package com.zgshen.code.permission;
 
+/**
+ * 位运算
+ * 权限管理
+ */
 public class Permission {
 
     private final static int BASE   = 1; //基数
