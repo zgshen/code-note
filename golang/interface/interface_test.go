@@ -24,6 +24,9 @@ func (d dog) voice() {
 	fmt.Println(d.name, "bark bark...")
 }
 
+// 接口完整性检查，把nil的dog转成Animal，没有实现全部接口编译就会报错
+var _ animal = (*dog)(nil)
+
 // 如果一只动物吃饭跑路的样子都像狗，那它就是一条狗
 // 不同Java需要显式用implement关键字，Go只要实现了接口的全部方法就是接口的类型
 
