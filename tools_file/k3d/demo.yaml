@@ -1,0 +1,97 @@
+# 两个Deployment镜像
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-server-1
+spec:
+  replicas: 1 #demo1一个副本
+  template:
+    metadata:
+      name: demo1
+      labels:
+        app: demo1
+    spec:
+      containers:
+        - name: demo1
+          image: akari93/py-server:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: demo1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-server-2
+spec:
+  replicas: 2 #demo2两个副本
+  template:
+    metadata:
+      name: demo2
+      labels:
+        app: demo2
+    spec:
+      containers:
+        - name: demo2
+          image: akari93/py-server:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: demo2
+---
+# 两个service
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo1-svc
+spec:
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: demo1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo2-svc
+spec:
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: demo2
+---
+# 一个ingress管理外部访问
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+spec:
+  rules:
+    - host: demo1.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo1-svc
+                port:
+                  number: 80
+    - host: demo2.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo2-svc
+                port:
+                  number: 80
