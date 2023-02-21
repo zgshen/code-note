@@ -5,7 +5,7 @@ import uvicorn
 import requests
 import json
 
-app = FastAPI()
+app = FastAPI(docs_url=None)
 
 
 class Request(BaseModel):
