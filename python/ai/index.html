@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body{
+        margin: 0;
+        font-size: 15px;
+    }
+    .container {
+        margin-left: 2%;
+    }
+    .footer{
+        width: 98%;
+        height: 100px;
+        line-height: 100px;
+        background-color: rgb(17 20 24 / 10%);
+    }
+    .middle{
+        width: 98%;
+        position: absolute;
+        top: 10px;
+        bottom:100px;
+        overflow: auto;
+        overflow-y: scroll;
+    }
+    .footer{
+        position: absolute;
+        bottom: 0px;
+    }
+    .bt{
+        width: 100px;
+        height: 30%;
+        margin-top: 10px;
+        position: relative;
+        top: -20px;
+    }
+    .qa{
+        white-space: pre-wrap;
+    }
+    p{
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+    }
+</style>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.js"></script>
+<body>
+
+<div class="container">
+    <div id="content" class="middle">
+        <div>
+            <pre class="qa">Q: who are you?</pre>
+            <pre class="qa">A: i am a robot? \n what about you?</pre>
+        </div><br>
+
+    </div>
+    <div class="footer">
+        <textarea id="question" cols="150" rows="3"></textarea>
+        <button id="bt_send" class="bt">send</button>
+    </div>
+</div>
+
+<script>
+    let content = document.getElementById("content")
+    document.getElementById("bt_send").addEventListener('click', function(){
+        let question = document.getElementById("question").value;
+        document.getElementById("question").value = '';
+        content.insertAdjacentHTML('beforeend', "<div><pre class=\"qa\">Q: " + question + "</pre>");
+        $.ajax({
+            url:"/qa",
+            type:"POST",
+            data:JSON.stringify({"question": question}),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(res){
+                console.log(res)
+                let str =  "<pre class=\"qa\">A: " + res.answer +"</pre> </div><br>";
+                content.insertAdjacentHTML('beforeend', str);
+                content.scrollTop = content.scrollHeight;        
+            }
+        })
+        
+    }, false);
+    
+</script>
+</body>
+</html>
