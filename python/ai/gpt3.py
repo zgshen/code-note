@@ -34,7 +34,7 @@ def sendQA(request: Request):
     res_json = json.loads(res.text)
     r = res_json["choices"][0]["text"]
     print(r)
-    return {'answer': r[2:]}
+    return {'answer': r.strip('\n')}
 
 
 if __name__ == "__main__":
