@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import uvicorn
 import requests
 import json
+import openai
 
 app = FastAPI(docs_url=None)
 
@@ -36,6 +37,17 @@ def sendQA(request: Request):
     print(r)
     return {'answer': r.strip('\n')}
 
+@app.post("/qa2")
+def senQA2(request: Request):
+    openai.api_key = 'your token'
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": request.question}
+        ]
+    )
+    print(completion.choices[0].message)
+    return {'answer': completion.choices[0].message.content.strip('\n')}
 
 if __name__ == "__main__":
     uvicorn.run(app, host='0.0.0.0', port=8888)

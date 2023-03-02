@@ -64,7 +64,7 @@
         document.getElementById("question").value = '';
         content.insertAdjacentHTML('beforeend', "<div><pre class=\"qa\">Q: " + question + "</pre>");
         $.ajax({
-            url:"/qa",
+            url:"/qa2",
             type:"POST",
             data:JSON.stringify({"question": question}),
             contentType:"application/json; charset=utf-8",
