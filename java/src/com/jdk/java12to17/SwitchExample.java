@@ -53,12 +53,38 @@ public class SwitchExample {
         Object o = 1000000000;
         String formatted = switch (o) {
             //相当于 if (o instanceof Integer && (int)o > 10)
-            case Integer i && i > 10 -> String.format("a large Integer %d", i);
+            //18之后版本不支持内部计算
+            //case Integer i && i > 10 -> String.format("a large Integer %d", i);
             case Integer i -> String.format("a small Integer %d", i);
             case Long l    -> String.format("a Long %d", l);
+            case null      -> String.format("null!");
             default        -> o.toString();
         };
         System.out.println(formatted);
+    }
+
+    /**
+     * 要么全用 -> 要么全用 ：，用 -> 不用手动加 break
+     */
+    @Test
+    public void switchTest() {
+        Integer num = 2;
+        switch (num) {
+            case null:
+                System.out.println("null!");
+                break;
+            case 1, 2, 3: // 1、2或3
+                System.out.println(num);
+                break;
+            default:
+                System.out.println("default1");
+        }
+
+        switch (num) {
+            case null -> System.out.println("null!");
+            case 1, 2 -> System.out.println(num);
+            default -> System.out.println("default2");
+        }
     }
 
 }
