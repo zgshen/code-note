@@ -35,6 +35,21 @@ public class SwitchExample {
         };
     }
 
+    /**
+     * record patterns 记录模式的匹配
+     */
+    @Test
+    public void recordTest() {
+        record MyPair<S,T>(S fst, T snd){};
+        MyPair<String, Integer> akari = new MyPair<>("Akari", 30);
+
+        switch (akari) {
+            case null -> System.out.println("null!");
+            case MyPair(var name, var age) -> System.out.printf("username:%s, user age:%d", name, age);
+            default -> System.out.println("default");
+        }
+    }
+
 }
 
 sealed abstract class Person permits Tom, Jack, Nathan {
