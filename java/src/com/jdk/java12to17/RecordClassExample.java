@@ -3,6 +3,9 @@ package com.jdk.java12to17;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * record 用于简化一些类的申明，性质类似 final 类，但可以定义为普通类形式、定义在其他类内部或定义在函数内部
+ */
 public class RecordClassExample {
 
     @Test
@@ -13,6 +16,21 @@ public class RecordClassExample {
         Assert.assertEquals(25, user.age());
         //User[id=1, username=nathan, age=25]
         System.out.println(user);
+    }
+
+    @Test
+    public void innerTest() {
+        record Customer (String name, int age) {
+            @Override
+            public String toString() {
+                return "Customer{" +
+                        "name='" + name + '\'' +
+                        ", age=" + age +
+                        '}';
+            }
+        };
+        Customer akari = new Customer("Akari", 30);
+        System.out.printf("record object:%s", akari);
     }
 
 }

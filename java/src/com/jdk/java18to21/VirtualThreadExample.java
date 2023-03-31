@@ -74,6 +74,15 @@ public class VirtualThreadExample {
         System.out.printf("固定线程数量线程池耗时:%sms %n", s4-s3);
     }
 
+    public void task(ExecutorService executor) {
+        IntStream.range(0, 10_000).forEach(i -> {
+            executor.submit(() -> {
+                Thread.sleep(Duration.ofSeconds(1));
+                return i;
+            });
+        });
+    }
+
     /**
      * ThreadLocal 中使用需要注意大量创建虚拟线程的资源占用
      * @throws InterruptedException
