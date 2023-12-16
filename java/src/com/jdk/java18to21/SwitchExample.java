@@ -2,6 +2,9 @@ package com.jdk.java18to21;
 
 import org.junit.Test;
 
+/**
+ * 正式特性，switch 的模式匹配
+ */
 public class SwitchExample {
 
     /**
