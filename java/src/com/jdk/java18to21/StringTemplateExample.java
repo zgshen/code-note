@@ -5,15 +5,16 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.Iterator;
 
-import static java.lang.StringTemplate.RAW;
-import static java.util.FormatProcessor.FMT;
+//import static java.lang.StringTemplate.RAW;
+//import static java.util.FormatProcessor.FMT;
 
 /**
  * 预览特性，字符串模板。
+ * java23已移除
  */
 public class StringTemplateExample {
 
-    @Test
+    /*@Test
     public void STRTest() {
         String name = "nathan";
         // STR 模板处理器
@@ -26,12 +27,12 @@ public class StringTemplateExample {
         System.out.println(STR."\{a} + \{b} = \{a+b}");
         System.out.println(STR."Tody is \{LocalDate.now()}.");
         System.out.println(STR."\{a++}, \{a++}, \{arr[0]}");
-    }
+    }*/
 
     /**
      * 多行模板表达式
      */
-    @Test
+    /*@Test
     public void mutilLineTest() {
         var version = 21;
         var str = STR."""
@@ -42,9 +43,9 @@ public class StringTemplateExample {
                 </html>
                 """;
         System.out.println(str);
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void FMTTest() {
         record Rectangle(String name, double width, double height) {
             double area() {
@@ -73,9 +74,9 @@ public class StringTemplateExample {
             """;
         System.out.println(strTable);
         System.out.println(fmtTable);
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void RAWTest() {
         String name = "Joan";
         //String info = "My name is \{name}."; //error
@@ -125,6 +126,6 @@ public class StringTemplateExample {
         String s = INTER."\{x} plus \{y} equals \{x + y}";
         System.out.println(s);
 
-    }
+    }*/
 
 }
